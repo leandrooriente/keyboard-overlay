@@ -1,0 +1,533 @@
+{
+  "name": "First version",
+  "keyboard": "Moonlander MK1",
+  "layers": [
+    {
+      "id": 0,
+      "name": "Base",
+      "subtitle": "Everyday typing",
+      "keys": {
+        "L0-0": {
+          "label": "Esc",
+          "kind": "standard"
+        },
+        "L0-1": {
+          "label": "1",
+          "kind": "standard",
+          "shifted": "!"
+        },
+        "L0-2": {
+          "label": "2",
+          "kind": "standard",
+          "shifted": "@"
+        },
+        "L0-3": {
+          "label": "3",
+          "kind": "standard",
+          "shifted": "#"
+        },
+        "L0-4": {
+          "label": "4",
+          "kind": "standard",
+          "shifted": "$"
+        },
+        "L0-5": {
+          "label": "5",
+          "kind": "standard",
+          "shifted": "%"
+        },
+        "L0-6": {
+          "label": "-",
+          "kind": "standard",
+          "shifted": "_"
+        },
+        "L1-0": {
+          "label": "Tab",
+          "kind": "standard"
+        },
+        "L1-1": {
+          "label": "Q",
+          "kind": "standard"
+        },
+        "L1-2": {
+          "label": "W",
+          "kind": "standard"
+        },
+        "L1-3": {
+          "label": "E",
+          "kind": "standard"
+        },
+        "L1-4": {
+          "label": "R",
+          "kind": "standard"
+        },
+        "L1-5": {
+          "label": "T",
+          "kind": "standard"
+        },
+        "L1-6": {
+          "label": "[",
+          "kind": "standard",
+          "shifted": "{"
+        },
+        "L2-0": {
+          "label": "`",
+          "kind": "standard",
+          "shifted": "~"
+        },
+        "L2-1": {
+          "label": "A",
+          "kind": "standard"
+        },
+        "L2-2": {
+          "label": "S",
+          "kind": "standard"
+        },
+        "L2-3": {
+          "label": "D",
+          "kind": "standard"
+        },
+        "L2-4": {
+          "label": "F",
+          "kind": "layer",
+          "secondary": "hold 2",
+          "holdLayer": 2
+        },
+        "L2-5": {
+          "label": "G",
+          "kind": "standard"
+        },
+        "L2-6": {
+          "label": "(",
+          "kind": "standard"
+        },
+        "L3-0": {
+          "label": "Shift",
+          "kind": "modifier",
+          "symbol": "shift",
+          "secondary": "L"
+        },
+        "L3-1": {
+          "label": "Z",
+          "kind": "standard"
+        },
+        "L3-2": {
+          "label": "X",
+          "kind": "standard"
+        },
+        "L3-3": {
+          "label": "C",
+          "kind": "standard"
+        },
+        "L3-4": {
+          "label": "V",
+          "kind": "standard"
+        },
+        "L3-5": {
+          "label": "B",
+          "kind": "standard"
+        },
+        "L4-0": {
+          "label": "Alt win",
+          "kind": "macro"
+        },
+        "L4-1": {
+          "label": "Alt app",
+          "kind": "macro"
+        },
+        "L4-2": {
+          "label": "Left Ctrl",
+          "kind": "modifier"
+        },
+        "L4-3": {
+          "label": "Option",
+          "kind": "modifier",
+          "symbol": "option"
+        },
+        "L4-4": {
+          "label": "Command",
+          "kind": "modifier",
+          "symbol": "command"
+        },
+        "R0-0": {
+          "label": "=",
+          "kind": "standard",
+          "shifted": "+"
+        },
+        "R0-1": {
+          "label": "6",
+          "kind": "standard",
+          "shifted": "^"
+        },
+        "R0-2": {
+          "label": "7",
+          "kind": "standard",
+          "shifted": "&"
+        },
+        "R0-3": {
+          "label": "8",
+          "kind": "standard",
+          "shifted": "*"
+        },
+        "R0-4": {
+          "label": "9",
+          "kind": "standard",
+          "shifted": "("
+        },
+        "R0-5": {
+          "label": "0",
+          "kind": "standard",
+          "shifted": ")"
+        },
+        "R0-6": {
+          "label": "Backspace",
+          "kind": "layer"
+        },
+        "R1-0": {
+          "label": "]",
+          "kind": "standard",
+          "shifted": "}"
+        },
+        "R1-1": {
+          "label": "Y",
+          "kind": "standard"
+        },
+        "R1-2": {
+          "label": "U",
+          "kind": "standard"
+        },
+        "R1-3": {
+          "label": "I",
+          "kind": "standard"
+        },
+        "R1-4": {
+          "label": "O",
+          "kind": "standard"
+        },
+        "R1-5": {
+          "label": "P",
+          "kind": "standard"
+        },
+        "R1-6": {
+          "label": "\\",
+          "kind": "standard",
+          "shifted": "|"
+        },
+        "R2-0": {
+          "label": ")",
+          "kind": "standard"
+        },
+        "R2-1": {
+          "label": "H",
+          "kind": "standard"
+        },
+        "R2-2": {
+          "label": "J",
+          "kind": "layer",
+          "secondary": "hold 1",
+          "holdLayer": 1
+        },
+        "R2-3": {
+          "label": "K",
+          "kind": "standard"
+        },
+        "R2-4": {
+          "label": "L",
+          "kind": "standard"
+        },
+        "R2-5": {
+          "label": ";",
+          "kind": "standard",
+          "shifted": ":"
+        },
+        "R2-6": {
+          "label": "'",
+          "kind": "standard",
+          "shifted": "\""
+        },
+        "R3-1": {
+          "label": "N",
+          "kind": "standard"
+        },
+        "R3-2": {
+          "label": "M",
+          "kind": "standard"
+        },
+        "R3-3": {
+          "label": ",",
+          "kind": "standard",
+          "shifted": "<"
+        },
+        "R3-4": {
+          "label": ".",
+          "kind": "standard",
+          "shifted": ">"
+        },
+        "R3-5": {
+          "label": "/",
+          "kind": "standard",
+          "shifted": "?"
+        },
+        "R3-6": {
+          "label": "Shift",
+          "kind": "modifier",
+          "symbol": "shift",
+          "secondary": "R"
+        },
+        "R4-2": {
+          "label": "Up",
+          "kind": "standard",
+          "symbol": "arrow.up"
+        },
+        "R4-3": {
+          "label": "Down",
+          "kind": "standard",
+          "symbol": "arrow.down"
+        },
+        "R4-4": {
+          "label": "Left",
+          "kind": "standard",
+          "symbol": "arrow.left"
+        },
+        "R4-5": {
+          "label": "Right",
+          "kind": "standard",
+          "symbol": "arrow.right"
+        },
+        "R4-6": {
+          "label": "",
+          "kind": "blank"
+        },
+        "LT0": {
+          "label": "Apps",
+          "kind": "macro"
+        },
+        "LT1": {
+          "label": "Space",
+          "kind": "standard",
+          "symbol": "space"
+        },
+        "LT2": {
+          "label": "Herdr",
+          "kind": "macro"
+        },
+        "LT3": {
+          "label": "",
+          "kind": "blank"
+        },
+        "RT0": {
+          "label": "⌕ + 🇧🇷",
+          "kind": "layer"
+        },
+        "RT1": {
+          "label": "Backspace",
+          "kind": "layer"
+        },
+        "RT2": {
+          "label": "Enter",
+          "kind": "standard",
+          "symbol": "return"
+        },
+        "RT3": {
+          "label": "",
+          "kind": "blank"
+        }
+      }
+    },
+    {
+      "id": 1,
+      "name": "Symbols",
+      "subtitle": "Function keys & media",
+      "keys": {
+        "L0-1": {
+          "label": "F1",
+          "kind": "function"
+        },
+        "L0-2": {
+          "label": "F2",
+          "kind": "function"
+        },
+        "L0-3": {
+          "label": "F3",
+          "kind": "function"
+        },
+        "L0-4": {
+          "label": "F4",
+          "kind": "function"
+        },
+        "L0-5": {
+          "label": "F5",
+          "kind": "function"
+        },
+        "L1-2": {
+          "label": "Previous",
+          "kind": "function",
+          "symbol": "backward.end"
+        },
+        "L1-3": {
+          "label": "Play",
+          "kind": "function",
+          "symbol": "play"
+        },
+        "L1-4": {
+          "label": "Next",
+          "kind": "function",
+          "symbol": "forward.end"
+        },
+        "L2-3": {
+          "label": "Volume down",
+          "kind": "media",
+          "symbol": "speaker.minus"
+        },
+        "L2-4": {
+          "label": "Volume up",
+          "kind": "media",
+          "symbol": "speaker.plus"
+        },
+        "L3-3": {
+          "label": "Brightness down",
+          "kind": "standard",
+          "symbol": "sun.min"
+        },
+        "L3-4": {
+          "label": "Brightness up",
+          "kind": "standard",
+          "symbol": "sun.max"
+        },
+        "L4-0": {
+          "label": "2",
+          "kind": "layer",
+          "secondary": "tap",
+          "tapLayer": 2
+        },
+        "R2-2": {
+          "label": "J",
+          "kind": "source",
+          "secondary": "hold 1",
+          "holdLayer": 1
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Numbers",
+      "subtitle": "Numpad & window shortcuts",
+      "keys": {
+        "R0-0": {
+          "label": "Left win",
+          "kind": "macro"
+        },
+        "R0-1": {
+          "label": "F6",
+          "kind": "function"
+        },
+        "R0-2": {
+          "label": "F7",
+          "kind": "function"
+        },
+        "R0-3": {
+          "label": "F8",
+          "kind": "function"
+        },
+        "R0-4": {
+          "label": "F9",
+          "kind": "function"
+        },
+        "R0-5": {
+          "label": "F10",
+          "kind": "function"
+        },
+        "R0-6": {
+          "label": "Sleep",
+          "kind": "macro"
+        },
+        "R1-0": {
+          "label": "Fullscreen",
+          "kind": "macro"
+        },
+        "R1-1": {
+          "label": "7",
+          "kind": "number"
+        },
+        "R1-2": {
+          "label": "8",
+          "kind": "number"
+        },
+        "R1-3": {
+          "label": "9",
+          "kind": "number"
+        },
+        "R1-4": {
+          "label": "-",
+          "kind": "number",
+          "secondary": "numpad"
+        },
+        "R1-5": {
+          "label": "Disabled",
+          "kind": "disabled",
+          "symbol": "nosign"
+        },
+        "R1-6": {
+          "label": "Pass 1",
+          "kind": "layer"
+        },
+        "R2-0": {
+          "label": "Right win",
+          "kind": "macro"
+        },
+        "R2-1": {
+          "label": "4",
+          "kind": "number"
+        },
+        "R2-2": {
+          "label": "5",
+          "kind": "number"
+        },
+        "R2-3": {
+          "label": "6",
+          "kind": "number"
+        },
+        "R2-4": {
+          "label": "+",
+          "kind": "number"
+        },
+        "R2-6": {
+          "label": "Pass 2",
+          "kind": "layer"
+        },
+        "R3-1": {
+          "label": "1",
+          "kind": "number"
+        },
+        "R3-2": {
+          "label": "2",
+          "kind": "number"
+        },
+        "R3-3": {
+          "label": "3",
+          "kind": "number"
+        },
+        "R3-4": {
+          "label": ".",
+          "kind": "number",
+          "secondary": "numpad"
+        },
+        "R4-2": {
+          "label": "0",
+          "kind": "layer",
+          "secondary": "↑"
+        },
+        "L2-4": {
+          "label": "F",
+          "kind": "source",
+          "secondary": "hold 2",
+          "holdLayer": 2
+        },
+        "L4-0": {
+          "label": "Alt win",
+          "kind": "source"
+        }
+      }
+    }
+  ]
+}
