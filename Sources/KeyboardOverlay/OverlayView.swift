@@ -1,36 +1,102 @@
+import AppKit
 import SwiftUI
 
 @MainActor final class OverlayState: ObservableObject {
     @Published var layout: KeyboardLayout
-    @Published var selectedLayer: Int {
+    @Published private(set) var selectedLayer: Int {
         didSet {
-            if persistsSelection { UserDefaults.standard.set(selectedLayer, forKey: "selectedLayer") }
+            updatePressedKeys()
         }
     }
+    private var manualLayer: Int
+    private var automaticLayer: Int?
     private let persistsSelection: Bool
     @Published var hoveredKey: String?
     @Published var loadError: String?
+    @Published var pressedKeys: Set<String> = []
+    @Published var keyMonitoringStatus: KeyMonitoringStatus = .localOnly
+    @Published var moonlanderStatus: MoonlanderStatus = .stopped
+    @Published var moonlanderError: String?
+    @Published private(set) var moonlanderConnected = false
+    private var physicalPressedKeys: Set<String> = []
+    private var keyTracker = KeyPressTracker()
     var dismiss: () -> Void = {}
+    var enableLiveKeys: () -> Void = {}
+    var followMoonlander: () -> Void = {}
 
     init(layout: KeyboardLayout, persistsSelection: Bool = true) {
         self.layout = layout
         self.persistsSelection = persistsSelection
-        selectedLayer = min(2, max(0, UserDefaults.standard.integer(forKey: "selectedLayer")))
+        let initialLayer = min(2, max(0, UserDefaults.standard.integer(forKey: "selectedLayer")))
+        manualLayer = initialLayer
+        selectedLayer = initialLayer
     }
 
     func select(_ layer: Int) {
-        selectedLayer = (layer + 3) % 3
+        manualLayer = (layer + 3) % 3
+        if persistsSelection { UserDefaults.standard.set(manualLayer, forKey: "selectedLayer") }
+        selectedLayer = automaticLayer ?? manualLayer
         hoveredKey = nil
     }
 
+    func setMoonlanderConnected(_ connected: Bool) {
+        moonlanderConnected = connected
+        if !connected {
+            automaticLayer = nil
+            physicalPressedKeys = []
+            selectedLayer = manualLayer
+        }
+        clearHostPressedKeys()
+    }
+
+    func followHardwareLayer(_ layer: Int) {
+        guard moonlanderConnected, (0...2).contains(layer) else { return }
+        automaticLayer = layer == 0 ? nil : layer
+        selectedLayer = automaticLayer ?? manualLayer
+    }
+
+    func recordPhysicalKey(_ id: String, pressed: Bool) {
+        guard moonlanderConnected else { return }
+        if pressed { physicalPressedKeys.insert(id) }
+        else { physicalPressedKeys.remove(id) }
+        updatePressedKeys()
+    }
+
     func reload() {
-        do { layout = try KeyboardLayout.load(); loadError = nil }
+        do { layout = try KeyboardLayout.load(); loadError = nil; updatePressedKeys() }
         catch { loadError = error.localizedDescription }
+    }
+
+    func recordKeyEvent(_ type: CGEventType, keyCode: UInt16, modifiers: NSEvent.ModifierFlags) {
+        guard !moonlanderConnected else { return }
+        switch type {
+        case .keyDown: keyTracker.keyDown(keyCode: keyCode, modifiers: modifiers)
+        case .keyUp: keyTracker.keyUp(keyCode: keyCode)
+        case .flagsChanged: keyTracker.flagsChanged(keyCode: keyCode, modifiers: modifiers)
+        default: return
+        }
+        updatePressedKeys()
+    }
+
+    func clearPressedKeys() {
+        physicalPressedKeys = []
+        clearHostPressedKeys()
+    }
+
+    func clearHostPressedKeys() {
+        keyTracker.reset()
+        updatePressedKeys()
+    }
+
+    private func updatePressedKeys() {
+        pressedKeys = moonlanderConnected ? physicalPressedKeys :
+            keyTracker.highlightedKeys(layout: layout, layer: selectedLayer)
     }
 }
 
 struct OverlayView: View {
     @ObservedObject var state: OverlayState
+    var rendersPreview = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -81,6 +147,24 @@ struct OverlayView: View {
             }
             .foregroundStyle(Palette.muted)
             .padding(.trailing, 18)
+            moonlanderIndicator
+            if !state.moonlanderConnected { liveKeysIndicator }
+            if rendersPreview {
+                // ImageRenderer cannot draw AppKit-backed Menu controls.
+                Image(systemName: "ellipsis").font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(Palette.muted).frame(width: 26, height: 30)
+            } else {
+                Menu {
+                    Button("Reload layout", action: state.reload)
+                    Button("Quit Keyboard Overlay") { NSApp.terminate(nil) }
+                } label: {
+                    Image(systemName: "ellipsis").font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(Palette.muted).frame(width: 26, height: 30)
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+                .accessibilityLabel("Overlay options")
+            }
             Button(action: state.dismiss) {
                 Image(systemName: "xmark").font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Palette.muted).frame(width: 30, height: 30)
@@ -91,6 +175,57 @@ struct OverlayView: View {
             .accessibilityLabel("Close overlay")
         }
         .padding(.horizontal, 28).padding(.vertical, 21)
+    }
+
+    private var moonlanderIndicator: some View {
+        Button(action: state.followMoonlander) {
+            Label(moonlanderTitle, systemImage: state.moonlanderConnected ? "link" : "keyboard")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(state.moonlanderConnected ? Palette.green : Palette.blue)
+                .padding(.horizontal, 10).padding(.vertical, 8)
+                .background(Palette.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
+        }
+        .buttonStyle(.plain)
+        .help(state.moonlanderConnected ?
+              "Following your Moonlander's physical keys and layers. Click to disconnect." :
+              (state.moonlanderError ?? "Connect your Moonlander to follow its keys and layer holds. Close Oryx Live Training first. If connecting fails, check that Live Training is enabled in your firmware."))
+    }
+
+    private var moonlanderTitle: String {
+        if state.moonlanderConnected && state.keyMonitoringStatus == .secureInput { return "Keys paused" }
+        switch state.moonlanderStatus {
+        case .connected: return "Following Moonlander"
+        case .connecting: return "Connecting…"
+        case .searching: return "Waiting for Moonlander"
+        case .unavailable: return "Retry Moonlander"
+        case .stopped: return "Follow Moonlander"
+        }
+    }
+
+    @ViewBuilder private var liveKeysIndicator: some View {
+        switch state.keyMonitoringStatus {
+        case .live:
+            Label("Live keys", systemImage: "waveform")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(Palette.green)
+                .help("Keys light up while you type in your foreground app. Escape closes the overlay.")
+        case .secureInput:
+            Text("Keys paused")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(Palette.muted)
+                .help("macOS Secure Input is active. Highlighting resumes when it ends.")
+        case .localOnly, .unavailable:
+            Button(action: state.enableLiveKeys) {
+                Label(state.keyMonitoringStatus == .unavailable ? "Live keys setup" : "Enable live keys",
+                      systemImage: "hand.raised")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Palette.orange)
+                    .padding(.horizontal, 10).padding(.vertical, 8)
+                    .background(Palette.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 7))
+            }
+            .buttonStyle(.plain)
+            .help("Allow Keyboard Overlay in System Settings → Privacy & Security → Input Monitoring, then reopen it. Without permission, only typing directly in this overlay is highlighted.")
+        }
     }
 
     private var layerPicker: some View {
@@ -138,6 +273,7 @@ struct OverlayView: View {
                 let inherited = state.layout.isInherited(key.id, layer: state.selectedLayer)
                 Keycap(legend: legend, inherited: inherited,
                        hovered: state.hoveredKey == key.id,
+                       pressed: state.pressedKeys.contains(key.id),
                        width: key.width, height: key.height)
                     .rotationEffect(.degrees(key.rotation))
                     .position(x: key.x, y: key.y)
@@ -148,6 +284,7 @@ struct OverlayView: View {
                     .help(keyDescription(key.id))
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(keyDescription(key.id))
+                    .accessibilityValue(state.pressedKeys.contains(key.id) ? "Pressed" : "Released")
             }
         }
     }
@@ -229,6 +366,7 @@ private struct Keycap: View {
     let legend: KeyLegend
     let inherited: Bool
     let hovered: Bool
+    let pressed: Bool
     let width: Double
     let height: Double
 
@@ -258,19 +396,21 @@ private struct Keycap: View {
                 Text(secondary).font(.system(size: 8, weight: .medium))
             }
         }
-        .foregroundStyle(muted ? Palette.muted.opacity(0.35) : accent)
+        .foregroundStyle(pressed ? Palette.text : (muted ? Palette.muted.opacity(0.35) : accent))
         .padding(.horizontal, 4)
         .frame(width: width, height: height)
         .background {
             RoundedRectangle(cornerRadius: 7)
-                .fill(muted ? Palette.background : (isPlain ? Palette.surface : accent.opacity(0.10)))
+                .fill(pressed ? Palette.orange.opacity(0.35) :
+                      (muted ? Palette.background : (isPlain ? Palette.surface : accent.opacity(0.10))))
                 .shadow(color: .black.opacity(muted ? 0 : 0.18), radius: 1, y: 2)
+                .shadow(color: pressed ? Palette.orange.opacity(0.25) : .clear, radius: 8)
         }
         .overlay {
             RoundedRectangle(cornerRadius: 7)
-                .strokeBorder(muted ? Palette.border.opacity(0.4) :
-                                (hovered ? accent.opacity(0.85) : (isPlain ? Palette.border : accent.opacity(0.35))),
-                              lineWidth: 1)
+                .strokeBorder(pressed ? Palette.orange : (muted ? Palette.border.opacity(0.4) :
+                                (hovered ? accent.opacity(0.85) : (isPlain ? Palette.border : accent.opacity(0.35)))),
+                              lineWidth: pressed ? 2 : 1)
         }
         .overlay(alignment: .bottom) {
             if !muted && !isPlain {
@@ -287,5 +427,6 @@ private struct Keycap: View {
                     .padding(.leading, 8)
             }
         }
+        .animation(.easeOut(duration: pressed ? 0.04 : 0.14), value: pressed)
     }
 }
